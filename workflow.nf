@@ -1,8 +1,9 @@
 nextflow.enable.dsl=2
 
+params.temp = "${baseDir}/downloads"
 process downloadFile {
 	// publishDir: "Some of the things I make are final products"
-	publishDir "/root/nextflow_training/nextflow_training", mode:'copy', overwrite: true
+	publishDir params.temp, mode:'copy', overwrite: true
 	output:
 		path "batch1.fasta" //which of the things I made are important for others?
 	"""
