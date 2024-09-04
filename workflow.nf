@@ -10,8 +10,10 @@ process downloadFile {
 	"""
 }
 
+// params.out = baseDir: "Making the base directory a variable"
+
 process countSequences {
-	publishDir "/root/nextflow_training/nextflow_training", mode:'copy', overwrite: true
+	publishDir params.out, mode:'copy', overwrite: true
 	input: // where does the worker before me put the things?
 		path infile
 	output: // What do I make out of what they give me?
@@ -21,6 +23,6 @@ process countSequences {
 	"""
 }
 workflow {
-  fastafile = downloadFile() // fastafile is the "conveyor belt"
-  countSequences(fastafile)
+  downloadFile() | countSequences() // |: Connecting processes with matching inputs/outputs
+  
 }
