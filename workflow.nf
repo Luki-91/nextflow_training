@@ -11,6 +11,7 @@ process downloadFile {
 	"""
 }
 
+params.out = baseDir
 // params.out = baseDir: "Making the base directory a variable"
 
 process countSequences {
@@ -24,6 +25,6 @@ process countSequences {
 	"""
 }
 workflow {
-  downloadFile() | countSequences() // |: Connecting processes with matching inputs/outputs
+  downloadFile | countSequences // |: Connecting processes with matching inputs/outputs
   
 }
