@@ -1,6 +1,8 @@
 nextflow.enable.dsl=2
 
 params.temp = "${baseDir}/downloads"
+// params.temp = "${baseDir}/downloads": "putting the downloads in a dedicated folder"
+
 process downloadFile {
 	// publishDir: "Some of the things I make are final products"
 	publishDir params.temp, mode:'copy', overwrite: true
