@@ -19,6 +19,9 @@ process splitSequences{
 		path infile
 	output:
 		path "split_*"
+		
+	// splitting the file ${infile} into .fasta files 
+	// having 2 lines (-l 2) with the name split_number (-d -a 1)
 	"""
 	split -l 2 -d -a 1 --additional-suffix=.fasta ${infile} split_
 	"""
