@@ -1,20 +1,17 @@
 nextflow.enable.dsl=2
 
-params.temp = "${launchDir}/downloads"
-// params.temp = "${launchDir}/downloads": "putting the downloads in a dedicated folder"
+params.out = "${launchDir}/downloads"
+// params.out = "${launchDir}/downloads": "putting the downloads in a dedicated folder"
 
 process downloadFile {
 	// publishDir: "Some of the things I make are final products"
-	publishDir params.temp, mode:'copy', overwrite: true
+	publishDir params.out, mode:'copy', overwrite: true
 	output:
 		path "batch1.fasta" //which of the things I made are important for others?
 	"""
 	wget https://tinyurl.com/cqbatch1 -O batch1.fasta
 	"""
 }
-
-params.out = launchDir
-// params.out = launchDir: "Making the base directory a variable"
 
 process countSequences {
 	publishDir params.out, mode:'copy', overwrite: true
