@@ -13,6 +13,17 @@ process downloadFile {
 	"""
 }
 
+process splitSequences{
+	publishDir params.out, mode:'copy', overwrite: true
+	input: // where does the worker before me put the things?
+		path infile
+	output:
+		path "split_*"
+	"""
+	split -l 2 -d -a 1 --additional-suffix=.fasta ${infile} split_
+	"""
+}
+
 process countSequences {
 	publishDir params.out, mode:'copy', overwrite: true
 	input: // where does the worker before me put the things?
@@ -24,6 +35,5 @@ process countSequences {
 	"""
 }
 workflow {
-  downloadFile | countSequences // |: Connecting processes with matching inputs/outputs
-  
+  downloadFile | splitSequences // |: Connecting processes with matching inputs/outputs
 }
