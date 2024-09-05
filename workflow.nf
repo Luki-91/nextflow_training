@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
-params.temp = "${baseDir}/downloads"
-// params.temp = "${baseDir}/downloads": "putting the downloads in a dedicated folder"
+params.temp = "${launchDir}/downloads"
+// params.temp = "${launchDir}/downloads": "putting the downloads in a dedicated folder"
 
 process downloadFile {
 	// publishDir: "Some of the things I make are final products"
@@ -13,8 +13,8 @@ process downloadFile {
 	"""
 }
 
-params.out = baseDir
-// params.out = baseDir: "Making the base directory a variable"
+params.out = launchDir
+// params.out = launchDir: "Making the base directory a variable"
 
 process countSequences {
 	publishDir params.out, mode:'copy', overwrite: true
