@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
-params.out = "${launchDir}/downloads"
-// params.out = "${launchDir}/downloads": "putting the downloads in a dedicated folder"
+params.out = "${launchDir}/output"
+// params.out = "${launchDir}/output": "putting the output in a dedicated folder"
 
 process downloadFile {
 	// publishDir: "Some of the things I make are final products"
