@@ -5,9 +5,9 @@ params.out = "$launchDir/output"
 process downloadFile {
   publishDir params.out, mode: "copy", overwrite: true
   output:
-    path "blub.fasta"
+    path "batch1.fasta"
   """
-  wget https://tinyurl.com/cqbatch1 -O blub.fasta
+  wget https://tinyurl.com/cqbatch1 -O batch1.fasta
   """
 }
 
@@ -40,7 +40,7 @@ process splitSequencesPython {
   output:
     path "seq_*.fasta"
   """
-  python $projectDir/split.py $infile seq_
+  python3 $projectDir/split.py $infile seq_
   """
 }
 
