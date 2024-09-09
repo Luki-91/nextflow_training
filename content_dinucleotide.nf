@@ -9,10 +9,10 @@ params.species = "not specified"
 process downloadGenome {
 	publishDir params.out, mode:'copy', overwrite: true
 	output:
-		path "homosapienscontig.fasta"
+		path "${params.species}.fasta"
 	//downlading the file with the variable params.url
 	"""
-	wget $params.url -O homosapienscontig.fasta
+	wget $params.url -O ${params.species}.fasta
 	"""
 }
 
@@ -52,11 +52,11 @@ process countReport {
   input:
 		path infile 
   output:
-    path "countreport.csv"
+    path "${params.species}.csv"
   """
   cat * > counts.csv
-  echo "# Dinucleotide, No_repeats" > countreport.csv
-  cat counts.csv >> countreport.csv
+  echo "# Dinucleotide, No_repeats" > ${params.species}.csv
+  cat counts.csv >> ${params.species}.csv
   """
 }
 
@@ -65,9 +65,9 @@ process generateGraph {
   input:
     path infile 
   output:
-    path "whatisit3.png"
+    path "${params.species}.png"
   """
-  Rscript ${projectDir}/plotting_script.R || true
+  Rscript ${projectDir}/plotting_script.R ${params.species}.csv ${params.species}.png || true
   """
 }
 
