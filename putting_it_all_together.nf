@@ -23,7 +23,7 @@ process cleanSAM {
   output:
     path "cleaned_sequences.sam"
   """
-  cat $infile | grep "Sequence" > cleaned_sequences.sam
+  cat $infile | grep -v "^@" > cleaned_sequences.sam
   """
 }
 
@@ -52,7 +52,19 @@ process samtoFASTA {
   """
 }
 
+process countStart {
+  publishDir params.out, mode: "copy", overwrite: true
+  input:
+    path infile 
+  output:
+    path "${infile.getSimpleName()}_S_count.txt"
+  """
+  echo -n "Number of Start Codons: " > ${infile.getSimpleName()}_S_count.txt
+  grep -o "ATG" $infile | wc -l >> ${infile.getSimpleName()}_S_count.txt
+  """
+}
+
 workflow{
-	fastafile = downloadSAM(Channel.from(params.url)) | cleanSAM | splitSAM | flatten | samtoFASTA
+	fastafile = downloadSAM(Channel.from(params.url)) | cleanSAM | splitSAM | flatten | samtoFASTA | countStart
 }
 
