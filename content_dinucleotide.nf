@@ -8,7 +8,8 @@ params.url = "https://gitlab.com/dabrowskiw/cq-examples/-/raw/master/data/dinucl
 process downloadGenome {
 	publishDir params.out, mode:'copy', overwrite: true
 	output:
-		path "homosapienscontig.fasta" //which of the things I made are important for others?
+		path "homosapienscontig.fasta"
+	//downlading the file with the variable params.url
 	"""
 	wget $params.url -O homosapienscontig.fasta
 	"""
@@ -26,6 +27,10 @@ process copyFiles {
 	"""
 }
 
+// This process gets two channels combined (tuple) as input (the config file with the dinucleotides and the downloaded fasta file)
+// The type of Dinucleotides is saved as the value of the tuple and echoed as the first element in each output .txt file
+// then a "," is added (all w/o new lines because of "-n". In the end the Dinucleotide (${dinuc}) is used as the regex for the
+// .fasta file ${tocount} where the output is put in new lines, then the number of lines are counted
 process countDinucleotides {
 	publishDir params.out, mode:'copy', overwrite: true
 	input: 
@@ -39,6 +44,8 @@ process countDinucleotides {
 	"""
 }
 
+// The output of countDinucleotides is used as input for this process, where "Dinucleotides and the No. of repeats" is the first line
+// and then the specific Dinucleotides and the numbers are appended to the csv file
 process countReport {
   publishDir params.out, mode: "copy", overwrite: true
   input:
