@@ -4,6 +4,7 @@ params.infile = "split.py"
 params.numsfile = "dinucleotides.txt"
 params.out = "$projectDir/out"
 params.url = "https://gitlab.com/dabrowskiw/cq-examples/-/raw/master/data/dinucleotides/homosapienscontig.fasta?inline=false"
+params.species = "not specified"
 
 process downloadGenome {
 	publishDir params.out, mode:'copy', overwrite: true
@@ -15,7 +16,7 @@ process downloadGenome {
 	"""
 }
 
-// example process with combined channels as input
+// example process with combined channels as input. This is a solution hint to learn how to work with combined inputs
 process copyFiles {
 	publishDir params.out
 	input:
@@ -64,15 +65,17 @@ process generateGraph {
   input:
     path infile 
   output:
-    path outfile
+    path "whatisit3.png"
   """
-  Rscript plotting_script.R
+  Rscript ${projectDir}/plotting_script.R || true
   """
 }
 
 workflow{
 	infile_channel = downloadGenome()
-	Channel.fromPath(params.numsfile) | splitText | map { it.trim() } | combine(infile_channel) | countDinucleotides | collect | countReport | generateGraph
+	nucl_channel = Channel.fromPath(params.numsfile).splitText().map { it.trim() }
+	counted_channel = countDinucleotides(nucl_channel.combine(infile_channel)).collect() 
+	generateGraph(countReport(counted_channel)) 
 	// numsfile_channel = Channel.fromPath(params.numsfile)
 	// numsfile_split = numsfile_channel.splitText().map { it.trim() }
 	// combined_channel = infile_channel.combine(numsfile_split)
