@@ -8,7 +8,7 @@ params.accession="SRR1777174"
 
 process prefetch {
 	storeDir params.storeDir
-	container "docker://ncbi/sra-tools"
+	container "https://depot.galaxyproject.org/singularity/sra-tools%3A2.11.0--pl5321ha49a11a_3"
 	input:
 		val accession
 	output:
