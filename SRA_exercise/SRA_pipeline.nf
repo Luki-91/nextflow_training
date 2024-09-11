@@ -4,7 +4,7 @@ params.url = ""
 params.temp = "${launchDir}/downloads"
 params.out = "${launchDir}/output"
 params.storeDir="${launchDir}/cache"
-params.accession="SRR1777174"
+params.accession="SRR12022081"
 
 process prefetch {
 	storeDir params.storeDir
@@ -22,11 +22,11 @@ process fasterqDump {
 	storeDir params.storeDir
 	container "https://depot.galaxyproject.org/singularity/sra-tools%3A2.11.0--pl5321ha49a11a_3"
 	input:
-		val accession
+		path infile
 	output:
-		path "*.fastq"
+		path "${infile.getSimpleName()}*.fastq"
 	"""
-	fasterq-dump $accession
+	fasterq-dump $infile
 	"""
 }
 
@@ -43,5 +43,5 @@ process generateStats {
 }
 
 workflow {
-	prefetch(Channel.from(params.accession)) | fasterqDump | generateStats
+	prefetch(Channel.from(params.accession)) | fasterqDump | flatten | generateStats
 }
