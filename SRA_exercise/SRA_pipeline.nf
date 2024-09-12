@@ -2,9 +2,12 @@ nextflow.enable.dsl = 2
 
 params.url = ""
 params.temp = "${launchDir}/downloads"
-params.out = "${launchDir}/output/"
+params.out = "${launchDir}/output"
 params.storeDir="${launchDir}/cache"
-params.accession="SRR12022081"
+params.accession="SRR12598797"
+params.with_fastqc = false
+params.with_stats = false
+
 
 process prefetch {
 	storeDir params.storeDir
@@ -37,6 +40,8 @@ process fastQutils {
 		path infile
 	output:
 		path "${infile.getSimpleName()}_fastqutils.txt"
+	when:
+	params.with_stats
 	"""
 	fastqutils stats $infile > ${infile.getSimpleName()}_fastqutils.txt
 	"""
@@ -49,11 +54,13 @@ process fastQC {
 		path infile
 	output:
 		path "${infile.getSimpleName()}_fastqc.txt"
+	when:
+	params.with_fastqc
 	"""
 	fastqc -t 3 -o $params.out $infile > ${infile.getSimpleName()}_fastqc.txt
 	"""
 }
-	
+
 workflow {
 	prefetch(Channel.from(params.accession)) | fasterqDump | flatten | (fastQC & fastQutils)
 }
