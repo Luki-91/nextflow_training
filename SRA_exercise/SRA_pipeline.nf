@@ -62,6 +62,29 @@ process fastQC {
 	"""
 }
 
+process fastP {
+	publishDir params.out, mode: "copy", overwrite: true
+	container "https://depot.galaxyproject.org/singularity/fastp%3A0.23.4--hadf994f_3"
+	input:
+		path infile
+	output:
+		path "${infile.getSimpleName()}_trimmed.fastq"
+	when:
+	params.with_fastp
+	"""
+	fastp -i $infile -o ${infile.getSimpleName()}_trimmed.fastq -5
+	"""
+}
+	// after flatten brackets are needed
 workflow {
-	prefetch(Channel.from(params.accession)) | fasterqDump | flatten | (fastQC & fastQutils)
+	// this way of writing the workflow shows a better performance since FastQC can run before FastP has started
+	prefetch_channel = prefetch(Channel.from(params.accession))
+	fasterq_channel = fasterqDump(prefetch_channel).flatten() 
+	fastP_channel = fastP(fasterq_channel)
+	QC_channel = fasterq_channel.concat(fastP_channel)
+	fastQC(QC_channel)
+	fastQutils(fasterq_channel)
+	// in this way FastQC needs to wait for FastP to finish so the whole process is slower
+//	fasterq_channel = Channel.from(params.accession) | prefetch | fasterqDump | flatten	
+//	fastP(fasterq_channel) | concat(fasterq_channel) | fastQC
 }
