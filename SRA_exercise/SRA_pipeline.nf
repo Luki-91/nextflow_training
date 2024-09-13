@@ -53,11 +53,12 @@ process fastQC {
 	input:
 		path infile
 	output:
-		path "${infile.getSimpleName()}_fastqc.txt"
+		path "${infile.getSimpleName()}_fastqc"
 	when:
 	params.with_fastqc
 	"""
-	fastqc -t 3 -o $params.out $infile > ${infile.getSimpleName()}_fastqc.txt
+	mkdir ${infile.getSimpleName()}_fastqc
+	fastqc -o ${infile.getSimpleName()}_fastqc $infile
 	"""
 }
 
